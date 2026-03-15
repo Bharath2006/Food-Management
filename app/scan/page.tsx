@@ -114,7 +114,7 @@ export default function QRScannerPage() {
         
         // Navigate to the donation details page
         setTimeout(() => {
-          router.push(`/scan/${parsedData.id}`);
+          router.push(`/scan/details?id=${parsedData.id}`);
         }, 1500);
       }
     } catch (err) {
@@ -134,7 +134,7 @@ export default function QRScannerPage() {
   const handleManualInput = () => {
     const donationId = prompt('Enter donation ID:');
     if (donationId) {
-      router.push(`/scan/${donationId}`);
+      router.push(`/scan/details?id=${donationId}`);
     }
   };
 

@@ -129,7 +129,7 @@ export function createDonationNotification(donation: Donation): Omit<Notificatio
     title: 'New Donation Available!',
     message: `${donation.foodType} (${donation.quantity} ${donation.unit}) is available for pickup near ${donation.location?.address || 'your area'}`,
     data: { donationId: donation.id },
-    actionUrl: `/scan/${donation.id}`
+    actionUrl: `/scan/details?id=${donation.id}`
   };
 }
 

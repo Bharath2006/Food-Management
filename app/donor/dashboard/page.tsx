@@ -161,7 +161,7 @@ export default function DonorDashboard() {
         type: 'donation',
         title: 'Donation Created Successfully! 🎉',
         message: `Your donation of ${finalDonation.foodType} (${finalDonation.quantity} ${finalDonation.unit}) has been posted and is now available for pickup.`,
-        actionUrl: `/scan/${donationId}`
+        actionUrl: `/scan/details?id=${donationId}`
       });
 
       if (user) {

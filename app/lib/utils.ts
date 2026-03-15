@@ -82,7 +82,7 @@ export function calculateDistance(
 export function generateQRCode(data: string): string {
   // Create a simple URL-based QR code for better mobile compatibility
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://zero-food-hero.vercel.app';
-  return `${baseUrl}/scan/${data}`;
+  return `${baseUrl}/scan/details?id=${data}`;
 }
 
 export function generateSimpleQRCode(donation: any): string {
