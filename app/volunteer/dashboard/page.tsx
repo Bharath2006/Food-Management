@@ -64,7 +64,7 @@ export default function VolunteerDashboard() {
   const loadDonations = async () => {
     try {
       setIsLoading(true);
-      const allDonations = donationStorage.getAllDonations();
+      const allDonations = await donationStorage.getAllDonations();
       
       // For volunteers: show available, pending, and ordered donations
       // For NGOs: show available and their requested donations
@@ -96,7 +96,7 @@ export default function VolunteerDashboard() {
     if (!user || user.role !== 'volunteer') return;
     
     try {
-      const donation = donationStorage.getDonationById(donationId);
+      const donation = await donationStorage.getDonationById(donationId);
       if (!donation) {
         alert('Donation not found');
         return;
@@ -110,7 +110,7 @@ export default function VolunteerDashboard() {
         newStatus = 'in_transit';
       }
 
-      const updatedDonation = donationStorage.updateDonation(donationId, {
+      const updatedDonation = await donationStorage.updateDonation(donationId, {
         status: newStatus,
         volunteerId: user.id,
         volunteerName: user.name || 'Volunteer',
@@ -146,7 +146,7 @@ export default function VolunteerDashboard() {
     if (!user || user.role !== 'ngo') return;
     
     try {
-      const donation = donationStorage.getDonationById(donationId);
+      const donation = await donationStorage.getDonationById(donationId);
       if (!donation) {
         alert('Donation not found');
         return;
@@ -165,7 +165,7 @@ export default function VolunteerDashboard() {
       }
 
       // Update donation with NGO request
-      const updatedDonation = donationStorage.updateDonation(donationId, {
+      const updatedDonation = await donationStorage.updateDonation(donationId, {
         status: 'pending',
         ngoId: user.id,
         ngoName: user.name || 'NGO',
@@ -217,7 +217,7 @@ export default function VolunteerDashboard() {
     if (!user) return;
     
     try {
-      const updatedDonation = donationStorage.updateDonation(donationId, {
+      const updatedDonation = await donationStorage.updateDonation(donationId, {
         status: 'delivered',
         updatedAt: new Date()
       });

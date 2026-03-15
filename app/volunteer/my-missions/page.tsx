@@ -40,13 +40,13 @@ export default function MyMissions() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'picked' | 'in_transit' | 'delivered'>('all');
 
-  const loadMissions = useCallback(() => {
+  const loadMissions = useCallback(async () => {
     if (!user) return;
     
     setIsLoading(true);
     
-    setTimeout(() => {
-      const allDonations = donationStorage.getAllDonations();
+    try {
+      const allDonations = await donationStorage.getAllDonations();
       
       // Filter missions where volunteer is assigned
       const volunteerMissions = allDonations.filter(d => 
@@ -78,8 +78,11 @@ export default function MyMissions() {
 
       setActiveMissions(active);
       setCompletedMissions(completed);
+    } catch (error) {
+      console.error('Error loading missions:', error);
+    } finally {
       setIsLoading(false);
-    }, 300);
+    }
   }, [user, volunteerLocation]);
 
   // Check authentication
@@ -117,7 +120,7 @@ export default function MyMissions() {
     setIsLoading(true);
     
     try {
-      donationStorage.updateDonation(missionId, {
+      await donationStorage.updateDonation(missionId, {
         status: newStatus,
         updatedAt: new Date()
       });

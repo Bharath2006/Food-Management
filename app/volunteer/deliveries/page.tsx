@@ -48,49 +48,56 @@ export default function VolunteerDeliveries() {
 
   /* Load deliveries */
   useEffect(() => {
-    loadDeliveries();
+    const onLocationChange = async () => {
+      await loadDeliveries();
+    };
+    onLocationChange();
   }, [volunteerLocation]);
 
-  const loadDeliveries = () => {
+  const loadDeliveries = async () => {
     setIsLoading(true);
 
-    const all = donationStorage.getAllDonations();
-    const picked = all.filter(d => d.status === 'picked');
-    const ordered = all.filter(d => d.status === 'ordered');
-    const delivered = all.filter(d => d.status === 'delivered');
+    try {
+      const all = await donationStorage.getAllDonations();
+      const picked = all.filter(d => d.status === 'picked');
+      const ordered = all.filter(d => d.status === 'ordered');
+      const delivered = all.filter(d => d.status === 'delivered');
 
-    const active = [...picked, ...ordered];
+      const active = [...picked, ...ordered];
 
-    if (volunteerLocation) {
-      setActiveDeliveries(
-        active.map(d => ({
-          ...d,
-          distance: LocationService.calculateDistance(
-            volunteerLocation.lat,
-            volunteerLocation.lng,
-            d.location.lat,
-            d.location.lng
-          )
-        }))
-      );
+      if (volunteerLocation) {
+        setActiveDeliveries(
+          active.map(d => ({
+            ...d,
+            distance: LocationService.calculateDistance(
+              volunteerLocation.lat,
+              volunteerLocation.lng,
+              d.location.lat,
+              d.location.lng
+            )
+          }))
+        );
 
-      setCompletedDeliveries(
-        delivered.map(d => ({
-          ...d,
-          distance: LocationService.calculateDistance(
-            volunteerLocation.lat,
-            volunteerLocation.lng,
-            d.location.lat,
-            d.location.lng
-          )
-        }))
-      );
-    } else {
-      setActiveDeliveries(active.map(d => ({ ...d, distance: 0 })));
-      setCompletedDeliveries(delivered.map(d => ({ ...d, distance: 0 })));
+        setCompletedDeliveries(
+          delivered.map(d => ({
+            ...d,
+            distance: LocationService.calculateDistance(
+              volunteerLocation.lat,
+              volunteerLocation.lng,
+              d.location.lat,
+              d.location.lng
+            )
+          }))
+        );
+      } else {
+        setActiveDeliveries(active.map(d => ({ ...d, distance: 0 })));
+        setCompletedDeliveries(delivered.map(d => ({ ...d, distance: 0 })));
+      }
+    } catch (error) {
+      console.error('Error loading deliveries:', error);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleDeliverDonation = async (donation: Donation) => {
@@ -100,7 +107,7 @@ export default function VolunteerDeliveries() {
     try {
       await new Promise(res => setTimeout(res, 2000));
 
-      donationStorage.updateDonation(donation.id, { status: 'delivered' });
+      await donationStorage.updateDonation(donation.id, { status: 'delivered' });
 
       setActiveDeliveries(prev => prev.filter(d => d.id !== donation.id));
       setCompletedDeliveries(prev => [
